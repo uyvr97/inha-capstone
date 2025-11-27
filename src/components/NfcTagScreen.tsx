@@ -1,12 +1,6 @@
 import { useEffect, useMemo } from "react";
-import { motion } from "framer-motion";
 import { Smartphone } from "lucide-react";
-import {
-  TIMINGS,
-  NFC_ANIMATIONS,
-  NFC_TRANSITIONS,
-  ANIMATION_VARIANTS,
-} from "../constants/animations";
+import { TIMINGS } from "../constants/animations";
 
 interface NfcTagScreenProps {
   includeReceipt: boolean;
@@ -32,11 +26,7 @@ export default function NfcTagScreen({
 
   return (
     <div className="h-full flex items-center justify-center p-12">
-      <motion.div
-        {...ANIMATION_VARIANTS.scaleIn}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden"
-      >
+      <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden kiosk-scale-in">
         {/* 헤더 */}
         <div className="bg-linear-to-r from-indigo-500 to-blue-500 p-8 text-center">
           <h1 className="text-2xl font-bold text-white mb-2">
@@ -48,30 +38,13 @@ export default function NfcTagScreen({
         {/* NFC 태그 */}
         <div className="p-12 text-center">
           <div className="relative w-48 h-48 mx-auto mb-8">
-            <motion.div
-              className="absolute inset-0 rounded-full border-4 border-indigo-400/40"
-              animate={NFC_ANIMATIONS.pulse}
-              transition={NFC_TRANSITIONS.pulse}
-            />
-            <motion.div
-              className="absolute inset-0 rounded-full border-4 border-indigo-400/40"
-              animate={NFC_ANIMATIONS.pulse}
-              transition={{ ...NFC_TRANSITIONS.pulse, delay: 1 }}
-            />
-
-            {/* 스마트폰 아이콘 */}
-            <motion.div
-              className="absolute inset-0 flex items-center justify-center"
-              animate={NFC_ANIMATIONS.phoneFloat}
-              transition={NFC_TRANSITIONS.phoneFloat}
-            >
-              <div className="bg-linear-to-br from-indigo-500 to-blue-500 rounded-full p-8 shadow-xl">
-                <Smartphone
-                  className="w-20 h-20 text-white"
-                  strokeWidth={1.5}
-                />
+            <div className="kiosk-pulse-ring absolute inset-0 rounded-full border-4 border-indigo-400/40" />
+            <div className="kiosk-pulse-ring kiosk-pulse-ring--slow absolute inset-0 rounded-full border-4 border-indigo-400/30" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="kiosk-floating-phone bg-linear-to-br from-indigo-500 to-blue-500 rounded-full p-8 shadow-xl">
+                <Smartphone className="w-20 h-20 text-white" strokeWidth={1.5} />
               </div>
-            </motion.div>
+            </div>
           </div>
 
           <h2 className="text-2xl font-bold text-slate-900 mb-4">
@@ -85,16 +58,15 @@ export default function NfcTagScreen({
           {/* 로딩 */}
           <div className="mt-12 flex justify-center gap-2">
             {LOADING_DOTS_DELAYS.map((delay, index) => (
-              <motion.div
+              <div
                 key={index}
-                className="w-3 h-3 bg-indigo-500 rounded-full"
-                animate={NFC_ANIMATIONS.dotPulse}
-                transition={{ ...NFC_TRANSITIONS.dotPulse, delay }}
+                className="kiosk-dot w-3 h-3 bg-indigo-500 rounded-full"
+                style={{ animationDelay: `${delay}s` }}
               />
             ))}
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

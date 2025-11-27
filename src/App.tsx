@@ -1,10 +1,14 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, lazy, Suspense } from "react";
 import StartScreen from "./components/StartScreen";
-import MenuScreen from "./components/MenuScreen";
-import PaymentScreen from "./components/PaymentScreen";
-import NfcTagScreen from "./components/NfcTagScreen";
-import NfcTagCompleteScreen from "./components/NfcTagComplete";
 import type { CartItem, OrderType, ScreenType } from "./types";
+import { markInteractionEnd } from "./utils/perf";
+
+const MenuScreen = lazy(() => import("./components/MenuScreen"));
+const PaymentScreen = lazy(() => import("./components/PaymentScreen"));
+const NfcTagScreen = lazy(() => import("./components/NfcTagScreen"));
+const NfcTagCompleteScreen = lazy(
+  () => import("./components/NfcTagComplete")
+);
 
 export default function App() {
   const [screen, setScreen] = useState<ScreenType>("start");
@@ -14,6 +18,12 @@ export default function App() {
     totalPrice: number;
   } | null>(null);
   const [includeReceipt, setIncludeReceipt] = useState(false);
+
+  useEffect(() => {
+    if (screen === "menu") {
+      markInteractionEnd("interaction:start-to-menu");
+    }
+  }, [screen]);
 
   const handleSelectOrderType = useCallback((type: OrderType) => {
     setOrderType(type);
@@ -48,40 +58,45 @@ export default function App() {
   }, [handleBackToStart]);
 
   return (
-    <div className="w-[720px] h-[1280px] bg-linear-to-br from-slate-50 to-slate-100 overflow-hidden relative font-sans">
-      <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl" />
-
+    <div className="w-[720px] h-[1280px] bg-slate-50 overflow-hidden relative font-sans">
       <div className="relative h-full">
         {screen === "start" && <StartScreen onSelect={handleSelectOrderType} />}
 
-        {screen === "menu" && (
-          <MenuScreen
-            orderType={orderType}
-            onBack={handleBackToStart}
-            onCheckout={handleCheckout}
-          />
-        )}
+        <Suspense
+          fallback={
+            <div className="absolute inset-0 flex items-center justify-center text-slate-400 text-lg">
+              화면을 준비하는 중입니다...
+            </div>
+          }
+        >
+          {screen === "menu" && (
+            <MenuScreen
+              orderType={orderType}
+              onBack={handleBackToStart}
+              onCheckout={handleCheckout}
+            />
+          )}
 
-        {screen === "payment" && completedOrder && (
-          <PaymentScreen
-            orderType={orderType}
-            items={completedOrder.items}
-            totalPrice={completedOrder.totalPrice}
-            onNfcTransfer={handleNfcTransfer}
-          />
-        )}
+          {screen === "payment" && completedOrder && (
+            <PaymentScreen
+              orderType={orderType}
+              items={completedOrder.items}
+              totalPrice={completedOrder.totalPrice}
+              onNfcTransfer={handleNfcTransfer}
+            />
+          )}
 
-        {screen === "nfcTag" && (
-          <NfcTagScreen
-            includeReceipt={includeReceipt}
-            onTagComplete={handleNfcTagComplete}
-          />
-        )}
+          {screen === "nfcTag" && (
+            <NfcTagScreen
+              includeReceipt={includeReceipt}
+              onTagComplete={handleNfcTagComplete}
+            />
+          )}
 
-        {screen === "nfcComplete" && (
-          <NfcTagCompleteScreen onComplete={handleNfcComplete} />
-        )}
+          {screen === "nfcComplete" && (
+            <NfcTagCompleteScreen onComplete={handleNfcComplete} />
+          )}
+        </Suspense>
       </div>
     </div>
   );

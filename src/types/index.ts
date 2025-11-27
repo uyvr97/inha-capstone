@@ -10,6 +10,7 @@ export interface MenuItemType {
   name: string;
   price: number;
   image: string;
+  imagejpg?: string;
   category: string;
 }
 

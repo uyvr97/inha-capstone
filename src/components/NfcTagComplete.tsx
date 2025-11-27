@@ -1,11 +1,9 @@
 import { useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
-import {
-  TIMINGS,
-  ANIMATION_VARIANTS,
-  NFC_TRANSITIONS,
-} from "../constants/animations";
+import { TIMINGS, ANIMATION_VARIANTS } from "../constants/animations";
+
+const SPRING_TRANSITION = { type: "spring" as const, stiffness: 200, damping: 20 };
 
 interface NfcTagCompleteScreenProps {
   onComplete: () => void;
@@ -33,7 +31,7 @@ export default function NfcTagCompleteScreen({
       >
         <motion.div
           {...ANIMATION_VARIANTS.popIn}
-          transition={{ delay: 0.2, ...NFC_TRANSITIONS.spring }}
+          transition={{ delay: 0.2, ...SPRING_TRANSITION }}
         >
           <CheckCircle
             className="w-32 h-32 text-blue-500 mx-auto mb-8"

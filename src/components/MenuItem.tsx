@@ -11,14 +11,24 @@ function MenuItem({ item, onAdd }: MenuItemProps) {
   return (
     <button
       onClick={() => onAdd(item)}
-      className="group relative bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col"
+      className="group relative bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-150 overflow-hidden flex flex-col"
     >
       <div className="aspect-square overflow-hidden bg-slate-100">
-        <ImageWithFallback
-          src={item.image}
-          alt={item.name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-        />
+        <picture className="block w-full h-full">
+          {item.imagejpg && (
+            <source
+              srcSet={`${item.imagejpg} 1x`}
+              type="image/jpg"
+              sizes="(max-width: 720px) 25vw, 180px"
+            />
+          )}
+          <ImageWithFallback
+            src={item.image}
+            alt={item.name}
+            className="w-full h-full object-cover transition-opacity duration-200"
+            sizes="(max-width: 720px) 25vw, 180px"
+          />
+        </picture>
       </div>
 
       <div className="p-2 flex-1 flex flex-col justify-between">

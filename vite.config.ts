@@ -8,4 +8,18 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  build: {
+    target: 'es2019',
+    cssCodeSplit: true,
+    chunkSizeWarningLimit: 600,
+    minify: 'esbuild',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          motion: ['framer-motion'],
+        },
+      },
+    },
+  },
 })

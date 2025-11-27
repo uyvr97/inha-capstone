@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 import {
   Trash2,
   Plus,
@@ -7,13 +7,8 @@ import {
   ShoppingBag,
   Store,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import type { CartItem, OrderType } from "../types";
 import { calculateTotalPrice, calculateTotalQuantity } from "../utils/cart";
-import {
-  ANIMATION_VARIANTS,
-  TRANSITION_DEFAULTS,
-} from "../constants/animations";
 
 interface CartProps {
   items: CartItem[];
@@ -23,7 +18,7 @@ interface CartProps {
   onCheckout: () => void;
 }
 
-export default function Cart({
+function Cart({
   items,
   orderType,
   onUpdateQuantity,
@@ -32,6 +27,23 @@ export default function Cart({
 }: CartProps) {
   const totalPrice = useMemo(() => calculateTotalPrice(items), [items]);
   const totalQuantity = useMemo(() => calculateTotalQuantity(items), [items]);
+  const formattedTotalPrice = useMemo(
+    () => totalPrice.toLocaleString(),
+    [totalPrice]
+  );
+  const formattedTotalQuantity = useMemo(
+    () => totalQuantity.toLocaleString(),
+    [totalQuantity]
+  );
+  const displayItems = useMemo(
+    () =>
+      items.map((item) => ({
+        ...item,
+        priceLabel: item.price.toLocaleString(),
+        totalLabel: (item.price * item.quantity).toLocaleString(),
+      })),
+    [items]
+  );
 
   return (
     <div className="h-full flex flex-col bg-white">
@@ -49,31 +61,24 @@ export default function Cart({
           </span>
         </div>
 
-        <AnimatePresence>
-          {items.length === 0 ? (
-            <motion.div
-              {...ANIMATION_VARIANTS.fadeIn}
-              className="h-full flex flex-col items-center justify-center text-slate-400"
-            >
-              <ShoppingBag className="w-20 h-20 mb-4 opacity-30" />
-              <p className="text-lg">선택된 메뉴가 없습니다</p>
-            </motion.div>
-          ) : (
-            <motion.div layout className="space-y-3 overflow-y-auto pr-2">
-              {items.map((item) => (
-                <motion.div
-                  key={item.id}
-                  layout
-                  {...ANIMATION_VARIANTS.slideLeft}
-                  transition={{ ...TRANSITION_DEFAULTS.spring, stiffness: 400 }}
-                  className="bg-slate-50 rounded-xl p-3 flex items-center"
-                >
+        {displayItems.length === 0 ? (
+          <div className="h-full flex flex-col items-center justify-center text-slate-400 transition-opacity duration-200">
+            <ShoppingBag className="w-20 h-20 mb-4 opacity-30" />
+            <p className="text-lg">선택된 메뉴가 없습니다</p>
+          </div>
+        ) : (
+          <div className="space-y-3 overflow-y-auto pr-2">
+            {displayItems.map((item) => (
+              <div
+                key={item.id}
+                className="bg-slate-50 rounded-xl p-3 flex items-center shadow-sm border border-slate-100"
+              >
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold text-slate-800">
                       {item.name}
                     </h3>
                     <p className="text-md font-bold text-slate-500">
-                      {item.price.toLocaleString()}원
+                      {item.priceLabel}원
                     </p>
                   </div>
 
@@ -104,7 +109,7 @@ export default function Cart({
                   </div>
 
                   <div className="w-28 text-right text-lg font-bold text-slate-800">
-                    {(item.price * item.quantity).toLocaleString()}원
+                    {item.totalLabel}원
                   </div>
 
                   <button
@@ -113,29 +118,26 @@ export default function Cart({
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </div>
+        )}
       </div>
 
       {/* 총액 및 결제 버튼 */}
-      {items.length > 0 && (
-        <motion.div
-          {...ANIMATION_VARIANTS.slideUp}
-          transition={TRANSITION_DEFAULTS.spring}
-          className="bg-white border-t-2 border-slate-100 p-6 space-y-4"
-        >
+      {displayItems.length > 0 && (
+        <div className="bg-white border-t-2 border-slate-100 p-6 space-y-4 transition-opacity duration-200">
           <div className="flex items-center justify-between text-2xl">
             <span className="font-semibold text-slate-600">총 수량</span>
-            <span className="font-bold text-slate-800">{totalQuantity}개</span>
+            <span className="font-bold text-slate-800">
+              {formattedTotalQuantity}개
+            </span>
           </div>
 
           <div className="flex items-center justify-between text-3xl">
             <span className="font-bold text-slate-800">총 결제금액</span>
             <span className="font-extrabold text-blue-600">
-              {totalPrice.toLocaleString()}원
+              {formattedTotalPrice}원
             </span>
           </div>
 
@@ -147,8 +149,10 @@ export default function Cart({
             <CreditCard className="w-9 h-9" />
             <span>결제하기</span>
           </button>
-        </motion.div>
+        </div>
       )}
     </div>
   );
 }
+
+export default memo(Cart);

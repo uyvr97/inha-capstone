@@ -6,6 +6,7 @@ export const MENU_DATA: MenuItemType[] = [
     name: "아메리카노",
     price: 4500,
     image: "/images/americano.jpg",
+    imagejpg: "/images/americano.jpg",
     category: "coffee",
   },
   {
@@ -13,6 +14,7 @@ export const MENU_DATA: MenuItemType[] = [
     name: "카페라떼",
     price: 5000,
     image: "/images/latte.jpg",
+    imagejpg: "/images/latte.jpg",
     category: "coffee",
   },
   {
@@ -20,6 +22,7 @@ export const MENU_DATA: MenuItemType[] = [
     name: "카푸치노",
     price: 5000,
     image: "/images/cappuccino.jpg",
+    imagejpg: "/images/cappuccino.jpg",
     category: "coffee",
   },
   {
@@ -27,6 +30,7 @@ export const MENU_DATA: MenuItemType[] = [
     name: "에스프레소",
     price: 4000,
     image: "/images/espresso.jpg",
+    imagejpg: "/images/espresso.jpg",
     category: "coffee",
   },
   {
@@ -34,6 +38,7 @@ export const MENU_DATA: MenuItemType[] = [
     name: "크루아상",
     price: 3500,
     image: "/images/croissant.jpg",
+    imagejpg: "/images/croissant.jpg",
     category: "dessert",
   },
   {
@@ -41,6 +46,7 @@ export const MENU_DATA: MenuItemType[] = [
     name: "블루베리 머핀",
     price: 4000,
     image: "/images/muffin.jpg",
+    imagejpg: "/images/muffin.jpg",
     category: "dessert",
   },
   {
@@ -48,6 +54,7 @@ export const MENU_DATA: MenuItemType[] = [
     name: "케이크",
     price: 5500,
     image: "/images/cake.jpg",
+    imagejpg: "/images/cake.jpg",
     category: "dessert",
   },
   {
@@ -55,6 +62,7 @@ export const MENU_DATA: MenuItemType[] = [
     name: "샌드위치",
     price: 6500,
     image: "/images/sandwich.jpg",
+    imagejpg: "/images/sandwich.jpg",
     category: "food",
   },
 ];

@@ -1,6 +1,6 @@
 import { ShoppingBag, Store } from "lucide-react";
-import { motion } from "framer-motion";
 import type { OrderType } from "../types";
+import { markInteractionStart } from "../utils/perf";
 
 interface StartScreenProps {
   onSelect: (type: OrderType) => void;
@@ -29,42 +29,35 @@ export default function StartScreen({ onSelect }: StartScreenProps) {
   return (
     <div className="h-full flex flex-col items-center justify-around py-16 px-8 text-center">
       {/* 헤더 */}
-      <motion.div
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
-      >
+      <div className="kiosk-fade-up">
         <h1 className="text-5xl font-extrabold text-slate-800 mb-4 tracking-tight">
           주문을 시작하시려면
         </h1>
         <p className="text-2xl text-slate-600">이용 방법을 선택해주세요</p>
-      </motion.div>
+      </div>
 
       {/* 선택 버튼 */}
       <div className="flex flex-col gap-10 items-center justify-center w-full px-6">
         {ORDER_OPTIONS.map((option) => {
           const Icon = option.icon;
           return (
-            <motion.button
+            <button
               key={option.type}
-              onClick={() => onSelect(option.type)}
-              className={`group relative w-full max-w-sm h-72 bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-4 border-transparent hover:border-${option.color}-500`}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              initial={{ opacity: 0, x: option.slideFrom }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{
-                duration: 0.6,
-                delay: option.animationDelay,
-                ease: "easeOut",
+              onClick={() => {
+                markInteractionStart("interaction:start-to-menu", {
+                  orderType: option.type,
+                });
+                onSelect(option.type);
               }}
+              className={`group relative w-full max-w-sm h-72 bg-white rounded-3xl shadow-lg transition-shadow duration-200 overflow-hidden border-4 border-transparent hover:border-${option.color}-500 kiosk-fade-up`}
+              style={{ animationDelay: `${option.animationDelay}s` }}
             >
               <div className="relative h-full flex flex-col items-center justify-center p-8">
                 <div
-                  className={`w-32 h-32 rounded-full bg-${option.color}-50 flex items-center justify-center mb-6 transition-colors duration-300`}
+                  className={`w-32 h-32 rounded-full bg-${option.color}-50 flex items-center justify-center mb-6 transition-colors duration-200`}
                 >
                   <Icon
-                    className={`w-16 h-16 text-${option.color}-600 transition-transform duration-300 group-hover:scale-110`}
+                    className={`w-16 h-16 text-${option.color}-600`}
                     strokeWidth={1.5}
                   />
                 </div>
@@ -72,22 +65,17 @@ export default function StartScreen({ onSelect }: StartScreenProps) {
                   {option.label}
                 </h2>
               </div>
-            </motion.button>
+            </button>
           );
         })}
       </div>
 
       {/* 푸터 */}
-      <motion.div
-        className="text-center"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" }}
-      >
+      <div className="text-center kiosk-fade-up" style={{ animationDelay: "0.4s" }}>
         <p className="text-lg text-slate-500">
           도움이 필요하시면 직원을 호출해주세요
         </p>
-      </motion.div>
+      </div>
     </div>
   );
 }

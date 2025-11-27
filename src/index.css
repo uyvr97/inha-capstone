@@ -23,3 +23,101 @@ body {
   transform: scale(var(--scale, 1));
   transition: transform 0.3s ease;
 }
+
+.kiosk-scale-in {
+  animation: kioskScaleIn 0.4s ease-out;
+}
+
+.kiosk-fade-up {
+  opacity: 0;
+  animation: kioskFadeUp 0.45s ease-out forwards;
+}
+
+.kiosk-fade-down {
+  opacity: 0;
+  animation: kioskFadeDown 0.45s ease-out forwards;
+}
+
+.kiosk-pulse-ring {
+  animation: kioskPulse 2.2s ease-in-out infinite;
+}
+
+.kiosk-pulse-ring--slow {
+  animation-duration: 3s;
+  animation-delay: 0.5s;
+}
+
+.kiosk-floating-phone {
+  animation: kioskFloat 3s ease-in-out infinite;
+}
+
+.kiosk-dot {
+  animation: kioskDot 1.4s ease-in-out infinite;
+  opacity: 0.4;
+}
+
+@keyframes kioskScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes kioskFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes kioskFadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes kioskPulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.05);
+    opacity: 0.15;
+  }
+}
+
+@keyframes kioskFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes kioskDot {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}

@@ -13,6 +13,17 @@ interface NfcTagScreenProps {
   orderSummary: OrderSummary;
   orderMeta: OrderSubmissionMeta;
   orderType: OrderType;
+import { useEffect } from "react";
+import { motion } from "framer-motion";
+import { Smartphone } from "lucide-react";
+import {
+  TIMINGS,
+  NFC_ANIMATIONS,
+  NFC_TRANSITIONS,
+  ANIMATION_VARIANTS,
+} from "../constants/animations";
+
+interface NfcTagScreenProps {
   onTagComplete: () => void;
 }
 
@@ -25,10 +36,6 @@ export default function NfcTagScreen({
   orderType,
   onTagComplete,
 }: NfcTagScreenProps) {
-  const headerText = useMemo(
-    () => (includeReceipt ? "번호표와 영수증을" : "번호표를"),
-    [includeReceipt]
-  );
 
   const [status, setStatus] =
     useState<keyof typeof NFC_STATUS_TEXT>("preparing");
@@ -126,6 +133,17 @@ export default function NfcTagScreen({
               ? "PN532 리더기를 초기화 중입니다"
               : "NFC로 데이터를 전송합니다"}
           </p>
+      <motion.div
+        {...ANIMATION_VARIANTS.scaleIn}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-hidden"
+      >
+        {/* 헤더 */}
+        <div className="bg-linear-to-r from-blue-500 to-purple-500 p-8 text-center">
+          <h1 className="text-2xl font-bold text-white mb-2">
+            영수증 전송중
+          </h1>
+          <p className="text-xl text-white/90">NFC로 데이터를 전송합니다</p>
         </div>
 
         {/* NFC 태그 */}
@@ -136,6 +154,28 @@ export default function NfcTagScreen({
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="kiosk-floating-phone bg-linear-to-br from-indigo-500 to-blue-500 rounded-full p-8 shadow-xl">
                 <Smartphone className="w-20 h-20 text-white" strokeWidth={1.5} />
+            <motion.div
+              className="absolute inset-0 rounded-full border-4 border-indigo-400/40"
+              animate={NFC_ANIMATIONS.pulse}
+              transition={NFC_TRANSITIONS.pulse}
+            />
+            <motion.div
+              className="absolute inset-0 rounded-full border-4 border-indigo-400/40"
+              animate={NFC_ANIMATIONS.pulse}
+              transition={{ ...NFC_TRANSITIONS.pulse, delay: 1 }}
+            />
+
+            {/* 스마트폰 아이콘 */}
+            <motion.div
+              className="absolute inset-0 flex items-center justify-center"
+              animate={NFC_ANIMATIONS.phoneFloat}
+              transition={NFC_TRANSITIONS.phoneFloat}
+            >
+              <div className="bg-linear-to-br from-blue-500 to-purple-500 rounded-full p-8 shadow-xl">
+                <Smartphone
+                  className="w-20 h-20 text-white"
+                  strokeWidth={1.5}
+                />
               </div>
             </div>
           </div>
@@ -169,6 +209,10 @@ export default function NfcTagScreen({
               </button>
             </div>
           )}
+          <p className="text-lg text-slate-600 mb-2">
+            키오스크 하단의 NFC 리더기에
+          </p>
+          <p className="text-lg text-slate-600">휴대폰을 가까이 대주세요</p>
 
           {/* 로딩 */}
           {(status === "preparing" || status === "ready") && (

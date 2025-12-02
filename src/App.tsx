@@ -22,6 +22,10 @@ export default function App() {
   const [completedOrder, setCompletedOrder] = useState<OrderSummary | null>(null);
   const [orderMeta, setOrderMeta] = useState<OrderSubmissionMeta | null>(null);
   const [includeReceipt, setIncludeReceipt] = useState(false);
+  const [completedOrder, setCompletedOrder] = useState<{
+    items: CartItem[];
+    totalPrice: number;
+  } | null>(null);
 
   useEffect(() => {
     if (screen === "menu") {
@@ -51,6 +55,8 @@ export default function App() {
 
   const handleOrderReady = useCallback((meta: OrderSubmissionMeta) => {
     setOrderMeta(meta);
+  const handleNfcTransfer = useCallback(() => {
+    setScreen("nfcTag");
   }, []);
 
   const handleNfcTransfer = useCallback(
@@ -112,6 +118,9 @@ export default function App() {
               onTagComplete={handleNfcTagComplete}
             />
           )}
+        {screen === "nfcTag" && (
+          <NfcTagScreen onTagComplete={handleNfcTagComplete}/>
+        )}
 
           {screen === "nfcComplete" && (
             <NfcTagCompleteScreen onComplete={handleNfcComplete} />

@@ -142,7 +142,7 @@ function MenuScreen({
         <div className="flex items-center justify-between mb-4 kiosk-fade-down">
           <button
             onClick={onBack}
-            className="flex items-center gap-2 text-base text-slate-600 hover:text-slate-800 transition-colors"
+            className="flex items-center gap-2 text-lg text-slate-600 hover:text-slate-800 transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
             <span>처음으로</span>
@@ -156,6 +156,8 @@ function MenuScreen({
               key={category.id}
               onClick={() => handleSelectCategory(category.id)}
               className={`px-4 py-2 rounded-xl transition-all duration-300 text-sm font-semibold ${
+              onClick={() => setSelectedCategory(category.id)}
+              className={`px-4 py-2 rounded-xl transition-all duration-300 text-lg font-semibold ${
                 selectedCategory === category.id
                   ? "bg-linear-to-r from-blue-500 to-purple-500 text-white shadow-lg"
                   : "bg-white text-slate-600 hover:bg-slate-50"

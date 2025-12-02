@@ -83,7 +83,7 @@ export const sendOrderData = async (
 
   try {
     console.log("API Request:", payload);
-    const response = await axios.post(API_ENDPOINT, payload, {
+    const response = await axios.post("/api/create", payload, {
       headers: {
         "Content-Type": "application/json",
       },

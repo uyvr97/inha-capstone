@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { CheckCircle, Loader2 } from "lucide-react";
-import type { CartItem, OrderType } from "../types";
+import type { CartItem, OrderSubmissionMeta, OrderType } from "../types";
 import { sendOrderData } from "../lib/api";
 import { TIMINGS } from "../constants/animations";
 
@@ -9,6 +9,7 @@ interface PaymentScreenProps {
   items: CartItem[];
   totalPrice: number;
   onNfcTransfer: (includeReceipt: boolean) => void;
+  onOrderReady: (meta: OrderSubmissionMeta) => void;
 }
 
 export default function PaymentScreen({
@@ -16,6 +17,7 @@ export default function PaymentScreen({
   items,
   totalPrice,
   onNfcTransfer,
+  onOrderReady,
 }: PaymentScreenProps) {
   const [isPaymentComplete, setIsPaymentComplete] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,6 +26,10 @@ export default function PaymentScreen({
     setIsLoading(true);
     try {
       const result = await sendOrderData(items, totalPrice, orderType);
+
+      if (result.data) {
+        onOrderReady(result.data);
+      }
 
       if (result.success) {
         console.log("주문 데이터 전송 성공:", result.data);
@@ -36,7 +42,7 @@ export default function PaymentScreen({
       setIsPaymentComplete(true);
       setIsLoading(false);
     }
-  }, [items, totalPrice, orderType]);
+  }, [items, totalPrice, orderType, onOrderReady]);
 
   useEffect(() => {
     processPayment();

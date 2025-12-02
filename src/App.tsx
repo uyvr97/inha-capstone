@@ -1,6 +1,12 @@
 import { useState, useCallback, useEffect, lazy, Suspense } from "react";
 import StartScreen from "./components/StartScreen";
-import type { CartItem, OrderType, ScreenType } from "./types";
+import type {
+  CartItem,
+  OrderSubmissionMeta,
+  OrderSummary,
+  OrderType,
+  ScreenType,
+} from "./types";
 import { markInteractionEnd } from "./utils/perf";
 
 const MenuScreen = lazy(() => import("./components/MenuScreen"));
@@ -13,10 +19,8 @@ const NfcTagCompleteScreen = lazy(
 export default function App() {
   const [screen, setScreen] = useState<ScreenType>("start");
   const [orderType, setOrderType] = useState<OrderType>("takeout");
-  const [completedOrder, setCompletedOrder] = useState<{
-    items: CartItem[];
-    totalPrice: number;
-  } | null>(null);
+  const [completedOrder, setCompletedOrder] = useState<OrderSummary | null>(null);
+  const [orderMeta, setOrderMeta] = useState<OrderSubmissionMeta | null>(null);
   const [includeReceipt, setIncludeReceipt] = useState(false);
 
   useEffect(() => {
@@ -33,6 +37,7 @@ export default function App() {
   const handleBackToStart = useCallback(() => {
     setCompletedOrder(null);
     setIncludeReceipt(false);
+    setOrderMeta(null);
     setScreen("start");
   }, []);
 
@@ -44,10 +49,21 @@ export default function App() {
     []
   );
 
-  const handleNfcTransfer = useCallback((withReceipt: boolean) => {
-    setIncludeReceipt(withReceipt);
-    setScreen("nfcTag");
+  const handleOrderReady = useCallback((meta: OrderSubmissionMeta) => {
+    setOrderMeta(meta);
   }, []);
+
+  const handleNfcTransfer = useCallback(
+    (withReceipt: boolean) => {
+      if (!orderMeta) {
+        console.warn("주문 메타데이터가 없어 PN532 세션을 생성할 수 없습니다.");
+        return;
+      }
+      setIncludeReceipt(withReceipt);
+      setScreen("nfcTag");
+    },
+    [orderMeta]
+  );
 
   const handleNfcTagComplete = useCallback(() => {
     setScreen("nfcComplete");
@@ -83,12 +99,16 @@ export default function App() {
               items={completedOrder.items}
               totalPrice={completedOrder.totalPrice}
               onNfcTransfer={handleNfcTransfer}
+              onOrderReady={handleOrderReady}
             />
           )}
 
-          {screen === "nfcTag" && (
+          {screen === "nfcTag" && completedOrder && orderMeta && (
             <NfcTagScreen
               includeReceipt={includeReceipt}
+              orderSummary={completedOrder}
+              orderMeta={orderMeta}
+              orderType={orderType}
               onTagComplete={handleNfcTagComplete}
             />
           )}

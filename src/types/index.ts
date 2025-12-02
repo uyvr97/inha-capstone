@@ -29,3 +29,20 @@ export interface Category {
   id: string;
   name: string;
 }
+
+export interface OrderSubmissionMeta {
+  orderId: string;
+  receiptUrl: string;
+}
+
+export interface OrderSummary {
+  items: CartItem[];
+  totalPrice: number;
+}
+
+export interface ReceiptIntentPayload extends OrderSummary {
+  orderId: string;
+  includeReceipt: boolean;
+  orderType: OrderType;
+  receiptUrl?: string;
+}

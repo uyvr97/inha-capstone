@@ -1,73 +1,23 @@
-# React + TypeScript + Vite
+# Raspberry Pi Kiosk (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+이 저장소는 라즈베리파이 기반 키오스크 UI를 구현한 React + TypeScript + Vite 프론트엔드입니다. 터치 기반 메뉴 선택 → 결제 → NFC 번호표/영수증 발급 과정을 시뮬레이션하며, PN532 센서를 이용해 스마트폰으로 영수증 URL을 전달하는 시나리오를 염두에 두고 있습니다.
 
-Currently, two official plugins are available:
+## 주요 화면 흐름
+1. 주문 유형(매장/포장) 선택
+2. 메뉴 선택 및 장바구니 결제
+3. 결제 성공 시 영수증 발급 여부 선택
+4. NFC 태깅 화면 → PN532를 통해 번호표/영수증 URL 전송
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## PN532 기반 NFC 영수증
+- 브라우저는 SPI/I2C 같은 하드웨어 버스를 직접 다룰 수 없으므로, 라즈베리파이에서 백엔드 서비스가 PN532를 제어해야 합니다.
+- 프론트엔드는 결제 완료 후 PN532 브릿지 API를 호출해 NDEF URL 세션을 예약합니다.
+- 상세한 설계와 API 규약은 [`docs/pn532-nfc-architecture.md`](docs/pn532-nfc-architecture.md)에 정리돼 있습니다.
 
-## React Compiler
+### 환경 변수
+| 변수 | 설명 |
+| --- | --- |
+| `VITE_API_BASE_URL` | 주문/결제 API 베이스 URL |
+| `VITE_NFC_SERVICE_URL` | PN532 브릿지 API (미설정 시 `VITE_API_BASE_URL` 사용) |
+| `VITE_RECEIPT_BASE_URL` | 영수증 뷰어 URL (미설정 시 `VITE_API_BASE_URL` 또는 현재 origin) |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+루트에 `.env.local`을 생성해 개발 환경에서 값을 지정합니다.

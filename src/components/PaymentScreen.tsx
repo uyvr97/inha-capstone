@@ -2,20 +2,19 @@ import { useEffect, useState, useCallback } from "react";
 import { CheckCircle, Loader2 } from "lucide-react";
 import type { CartItem, OrderType } from "../types";
 import { sendOrderData } from "../lib/api";
-import { TIMINGS } from "../constants/animations";
 
 interface PaymentScreenProps {
   orderType: OrderType;
   items: CartItem[];
   totalPrice: number;
-  onNfcTransfer: () => void;
+  onReceiptSelect: (type: "paper" | "electronic") => void;
 }
 
 export default function PaymentScreen({
   orderType,
   items,
   totalPrice,
-  onNfcTransfer,
+  onReceiptSelect,
 }: PaymentScreenProps) {
   const [isPaymentComplete, setIsPaymentComplete] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -39,11 +38,15 @@ export default function PaymentScreen({
 
   useEffect(() => {
     processPayment();
+  }, [processPayment]);
 
-    //자동 리다이렉트
-    const timer = setTimeout(() => onNfcTransfer(), TIMINGS.AUTO_REDIRECT_MS);
-    return () => clearTimeout(timer);
-  }, [processPayment, onNfcTransfer]);
+  const handlePaperReceipt = useCallback(() => {
+    onReceiptSelect("paper");
+  }, [onReceiptSelect]);
+
+  const handleElectronicReceipt = useCallback(() => {
+    onReceiptSelect("electronic");
+  }, [onReceiptSelect]);
 
   return (
     <div className="h-full flex items-center justify-center p-8">
@@ -72,18 +75,32 @@ export default function PaymentScreen({
         {/* 영수증 선택 */}
         {!isLoading && isPaymentComplete && (
           <div className="p-10">
-            <div className="flex gap-">
-              <button
-                onClick={onNfcTransfer}
-                className="flex-1 bg-linear-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-4 rounded-xl transition-all duration-300 flex items-center justify-center text-2xl font-bold"
-              >
-                영수증 발급받기
-              </button>
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">
+                영수증 발급하기
+              </h2>
+              <p className="text-lg text-slate-500">
+                원하는 발급 방식을 선택해주세요
+              </p>
             </div>
 
-            <p className="text-center text-slate-400 mt-5 text-lg">
-              10초 후 자동으로 화면이 전환됩니다.
-            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={handlePaperReceipt}
+                className="flex-1 bg-white border-2 border-slate-300 text-slate-700 py-6 rounded-xl transition-all duration-300 flex flex-col items-center justify-center"
+              >
+                <span className="text-xl font-bold">종이영수증</span>
+                <span className="text-base text-slate-500 mt-1">즉시 발급</span>
+              </button>
+
+              <button
+                onClick={handleElectronicReceipt}
+                className="flex-1 bg-linear-to-r from-blue-500 to-purple-500 text-white py-6 rounded-xl transition-all duration-300 flex flex-col items-center justify-center shadow-lg"
+              >
+                <span className="text-xl font-bold">전자영수증</span>
+                <span className="text-base text-white/80 mt-1">NFC 전송</span>
+              </button>
+            </div>
           </div>
         )}
 

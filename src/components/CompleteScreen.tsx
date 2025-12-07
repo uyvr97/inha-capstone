@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
 import {
@@ -14,6 +14,11 @@ interface NfcTagCompleteScreenProps {
 export default function NfcTagCompleteScreen({
   onComplete,
 }: NfcTagCompleteScreenProps) {
+  const timeoutSeconds = useMemo(
+    () => TIMINGS.NFC_COMPLETE_TIMEOUT_MS / 1000,
+    []
+  );
+
   useEffect(() => {
     const timer = setTimeout(onComplete, TIMINGS.NFC_COMPLETE_TIMEOUT_MS);
     return () => clearTimeout(timer);
@@ -50,7 +55,7 @@ export default function NfcTagCompleteScreen({
           transition={{ delay: 0.3, duration: 0.5 }}
           className="text-4xl font-bold text-slate-900 mb-4"
         >
-          전송 완료
+          발급 완료
         </motion.h1>
 
         <motion.p
@@ -58,7 +63,7 @@ export default function NfcTagCompleteScreen({
           transition={{ delay: 0.5, duration: 0.5 }}
           className="text-lg text-slate-400 mt-8"
         >
-          3초 후 자동으로 처음 화면으로 돌아갑니다
+          {timeoutSeconds}초 후 자동으로 처음 화면으로 돌아갑니다
         </motion.p>
       </motion.div>
     </div>

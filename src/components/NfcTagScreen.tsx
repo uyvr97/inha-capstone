@@ -14,10 +14,7 @@ interface NfcTagScreenProps {
 
 const LOADING_DOTS_DELAYS = [0, 0.3, 0.6] as const;
 
-export default function NfcTagScreen({
-  onTagComplete,
-}: NfcTagScreenProps) {
-
+export default function NfcTagScreen({ onTagComplete }: NfcTagScreenProps) {
   useEffect(() => {
     // 10초 후 태그 완료 화면으로 이동, 실제로는 NFC 태그 감지 시
     const timer = setTimeout(onTagComplete, TIMINGS.NFC_TAG_TIMEOUT_MS);
@@ -33,10 +30,8 @@ export default function NfcTagScreen({
       >
         {/* 헤더 */}
         <div className="bg-linear-to-r from-blue-500 to-purple-500 p-8 text-center">
-          <h1 className="text-2xl font-bold text-white mb-2">
-            영수증 전송중
-          </h1>
-          <p className="text-xl text-white/90">NFC로 데이터를 전송합니다</p>
+          <h1 className="text-2xl font-bold text-white mb-2">영수증 전송중</h1>
+          <p className="text-xl text-white/90">NFC로 영수증을 전송합니다</p>
         </div>
 
         {/* NFC 태그 */}

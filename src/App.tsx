@@ -3,7 +3,7 @@ import StartScreen from "./components/StartScreen";
 import MenuScreen from "./components/MenuScreen";
 import PaymentScreen from "./components/PaymentScreen";
 import NfcTagScreen from "./components/NfcTagScreen";
-import NfcTagCompleteScreen from "./components/NfcTagComplete";
+import CompleteScreen from "./components/CompleteScreen";
 import type { CartItem, OrderType, ScreenType } from "./types";
 
 export default function App() {
@@ -32,15 +32,19 @@ export default function App() {
     []
   );
 
-  const handleNfcTransfer = useCallback(() => {
-    setScreen("nfcTag");
+  const handleReceiptSelect = useCallback((type: "paper" | "electronic") => {
+    if (type === "paper") {
+      setScreen("Complete");
+    } else {
+      setScreen("nfcTag");
+    }
   }, []);
 
   const handleNfcTagComplete = useCallback(() => {
-    setScreen("nfcComplete");
+    setScreen("Complete");
   }, []);
 
-  const handleNfcComplete = useCallback(() => {
+  const handleComplete = useCallback(() => {
     handleBackToStart();
   }, [handleBackToStart]);
 
@@ -65,16 +69,16 @@ export default function App() {
             orderType={orderType}
             items={completedOrder.items}
             totalPrice={completedOrder.totalPrice}
-            onNfcTransfer={handleNfcTransfer}
+            onReceiptSelect={handleReceiptSelect}
           />
         )}
 
         {screen === "nfcTag" && (
-          <NfcTagScreen onTagComplete={handleNfcTagComplete}/>
+          <NfcTagScreen onTagComplete={handleNfcTagComplete} />
         )}
 
-        {screen === "nfcComplete" && (
-          <NfcTagCompleteScreen onComplete={handleNfcComplete} />
+        {screen === "Complete" && (
+          <CompleteScreen onComplete={handleComplete} />
         )}
       </div>
     </div>

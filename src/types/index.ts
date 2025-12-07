@@ -15,14 +15,9 @@ export interface MenuItemType {
 
 export type OrderType = "takeout" | "dinein";
 
-export type ScreenType =
-  | "start"
-  | "menu"
-  | "payment"
-  | "nfcTag"
-  | "nfcComplete";
+export type ScreenType = "start" | "menu" | "payment" | "nfcTag" | "Complete";
 
-export type NfcTransferType = "ticketOnly" | "ticketWithReceipt";
+export type ReceiptType = "paper" | "electronic";
 
 export interface Category {
   id: string;

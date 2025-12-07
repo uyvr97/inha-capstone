@@ -48,7 +48,7 @@ export default function StartScreen({ onSelect }: StartScreenProps) {
             <motion.button
               key={option.type}
               onClick={() => onSelect(option.type)}
-              className={`group relative w-full max-w-sm h-72 bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-4 border-transparent hover:border-${option.color}-500`}
+              className={`group relative w-full max-w-sm h-72 bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-4 border-transparent`}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               initial={{ opacity: 0, x: option.slideFrom }}

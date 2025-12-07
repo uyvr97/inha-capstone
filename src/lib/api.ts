@@ -19,7 +19,9 @@ export const sendOrderData = async (
   totalPrice: number,
   orderType: "takeout" | "dinein"
 ) => {
-  const paymentTime = new Date().toISOString().slice(0, 19).replace("T", " ");
+  const now = new Date();
+  const kstDate = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  const paymentTime = kstDate.toISOString().slice(0, 19).replace("T", " ");
 
   const payload: OrderPayload = {
     store_name: "집장인들",
